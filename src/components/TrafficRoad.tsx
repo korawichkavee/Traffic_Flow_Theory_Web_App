@@ -8,11 +8,10 @@ interface TrafficRoadProps {
 
 interface Car {
   id: number;
-  x: number;
+  x: number; // position in pixels
   lane: number;
-  speed: number;
+  speed: number; // km/h with slight variation
   color: string;
-  length: number;
 }
 
 const CAR_COLORS = [
@@ -42,28 +41,47 @@ export default function TrafficRoad({ trafficState, params }: TrafficRoadProps) 
   const animRef = useRef<number>(0);
   const lastTimeRef = useRef<number>(0);
   const [dimensions, setDimensions] = useState({ width: 600, height: 300 });
+  const prevDensityRef = useRef<number>(trafficState.density);
 
-  // Initialize/reset cars based on density
+  // Calculate car spacing and initialize cars
   useEffect(() => {
-    const numCars = Math.round(trafficState.density * params.roadLength * params.numLanes);
+    const density = trafficState.density;
+    const numCarsPerLane = Math.max(1, Math.round(density * params.roadLength));
+    const totalCars = numCarsPerLane * params.numLanes;
+
+    // Spacing calculation (real-world):
+    // Average spacing = 1000/density meters (center-to-center)
+    // Gap = spacing - vehicle_length (~5m average)
+    // At jam (150 veh/km): gap ≈ 1.7m
+    // At free flow (10 veh/km): gap ≈ 95m
+
     const cars: Car[] = [];
-    for (let i = 0; i < numCars; i++) {
-      cars.push({
-        id: i,
-        x: Math.random() * dimensions.width,
-        lane: i % params.numLanes,
-        speed: trafficState.speed * (0.85 + Math.random() * 0.3),
-        color: CAR_COLORS[i % CAR_COLORS.length],
-        length: 18 + Math.random() * 12,
-      });
+    let carId = 0;
+
+    for (let lane = 0; lane < params.numLanes; lane++) {
+      for (let i = 0; i < numCarsPerLane; i++) {
+        // Evenly distribute cars along the road
+        const positionFraction = i / numCarsPerLane;
+        const x = positionFraction * dimensions.width;
+
+        cars.push({
+          id: carId++,
+          x: x,
+          lane: lane,
+          speed: trafficState.speed * (0.9 + Math.random() * 0.2), // slight variation
+          color: CAR_COLORS[carId % CAR_COLORS.length],
+        });
+      }
     }
+
     carsRef.current = cars;
+    prevDensityRef.current = density;
   }, [trafficState.density, trafficState.speed, params.roadLength, params.numLanes, dimensions.width]);
 
   // Update car speeds when traffic state changes
   useEffect(() => {
     carsRef.current.forEach(car => {
-      car.speed = trafficState.speed * (0.85 + Math.random() * 0.3);
+      car.speed = trafficState.speed * (0.9 + Math.random() * 0.2);
     });
   }, [trafficState.speed]);
 
@@ -83,15 +101,16 @@ export default function TrafficRoad({ trafficState, params }: TrafficRoadProps) 
       carsRef.current.forEach(car => {
         const pixelsPerSec = (car.speed / 3600) * scale;
         car.x += pixelsPerSec * dt;
-        if (car.x > dimensions.width + 60) {
-          car.x = -60;
+        // Wrap around
+        if (car.x > dimensions.width + 50) {
+          car.x -= dimensions.width + 100;
         }
       });
 
       // Draw
       ctx.clearRect(0, 0, dimensions.width, dimensions.height);
       drawRoad(ctx, dimensions.width, dimensions.height, params.numLanes);
-      drawCars(ctx, carsRef.current, dimensions.height, params.numLanes);
+      drawCars(ctx, carsRef.current, dimensions.height, params.numLanes, trafficState.density, params.roadLength, dimensions.width);
       drawOverlay(ctx, trafficState, dimensions.width, params.freeFlowSpeed);
 
       animRef.current = requestAnimationFrame(animate);
@@ -196,45 +215,72 @@ function drawRoad(ctx: CanvasRenderingContext2D, width: number, height: number, 
   ctx.setLineDash([]);
 }
 
-function drawCars(ctx: CanvasRenderingContext2D, cars: Car[], height: number, numLanes: number) {
+function drawCars(
+  ctx: CanvasRenderingContext2D,
+  cars: Car[],
+  height: number,
+  numLanes: number,
+  density: number,
+  roadLength: number,
+  canvasWidth: number
+) {
   const roadTop = height * 0.2;
   const roadBottom = height * 0.8;
   const roadHeight = roadBottom - roadTop;
   const laneHeight = roadHeight / numLanes;
-  const carHeight = Math.min(laneHeight * 0.55, 28);
+
+  // Calculate car dimensions based on density and spacing
+  // Real spacing: 1000/density meters center-to-center
+  // Vehicle length: ~5m (sedan), ~10m (truck) - use 5m average
+  const vehicleLengthMeters = 5;
+  const spacingMeters = density > 0 ? 1000 / density : canvasWidth; // meters between cars
+  const gapMeters = Math.max(0.5, spacingMeters - vehicleLengthMeters); // minimum 0.5m gap
+
+  // Convert to pixels
+  const pixelsPerMeter = canvasWidth / (roadLength * 1000);
+  let carLengthPx = vehicleLengthMeters * pixelsPerMeter;
+  let gapPx = gapMeters * pixelsPerMeter;
+
+  // Ensure cars are visible but not too large
+  carLengthPx = Math.max(8, Math.min(40, carLengthPx));
+  gapPx = Math.max(3, Math.min(80, gapPx)); // minimum 3px gap even at jam
+
+  const carHeight = Math.min(laneHeight * 0.55, 26);
 
   cars.forEach(car => {
     const y = roadTop + car.lane * laneHeight + (laneHeight - carHeight) / 2;
-    const x = car.x - car.length / 2;
+    const x = car.x - carLengthPx / 2;
 
     // Car shadow
     ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
-    roundRect(ctx, x + 2, y + 2, car.length, carHeight, 4);
+    roundRect(ctx, x + 2, y + 2, carLengthPx, carHeight, 3);
     ctx.fill();
 
     // Car body
     ctx.fillStyle = car.color;
-    roundRect(ctx, x, y, car.length, carHeight, 4);
+    roundRect(ctx, x, y, carLengthPx, carHeight, 3);
     ctx.fill();
 
     // Car roof (lighter shade)
     ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
-    roundRect(ctx, x + car.length * 0.25, y + 2, car.length * 0.35, carHeight - 4, 2);
+    roundRect(ctx, x + carLengthPx * 0.25, y + 2, carLengthPx * 0.35, carHeight - 4, 2);
     ctx.fill();
 
     // Windshield
     ctx.fillStyle = 'rgba(135, 206, 235, 0.6)';
-    ctx.fillRect(x + car.length * 0.65, y + 3, car.length * 0.15, carHeight - 6);
+    ctx.fillRect(x + carLengthPx * 0.65, y + 3, carLengthPx * 0.15, carHeight - 6);
 
     // Headlights
-    ctx.fillStyle = 'rgba(255, 255, 200, 0.8)';
-    ctx.fillRect(x + car.length - 3, y + 3, 3, 3);
-    ctx.fillRect(x + car.length - 3, y + carHeight - 6, 3, 3);
+    if (carLengthPx > 15) {
+      ctx.fillStyle = 'rgba(255, 255, 200, 0.8)';
+      ctx.fillRect(x + carLengthPx - 2, y + 3, 2, 2);
+      ctx.fillRect(x + carLengthPx - 2, y + carHeight - 5, 2, 2);
 
-    // Taillights
-    ctx.fillStyle = 'rgba(255, 50, 50, 0.8)';
-    ctx.fillRect(x, y + 3, 2, 3);
-    ctx.fillRect(x, y + carHeight - 6, 2, 3);
+      // Taillights
+      ctx.fillStyle = 'rgba(255, 50, 50, 0.8)';
+      ctx.fillRect(x, y + 3, 2, 2);
+      ctx.fillRect(x, y + carHeight - 5, 2, 2);
+    }
   });
 }
 

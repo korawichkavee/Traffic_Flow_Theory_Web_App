@@ -61,7 +61,7 @@ export default function Controls({
           <SliderControl
             label="Free-flow Speed (v_f)"
             value={params.freeFlowSpeed}
-            min={40}
+            min={30}
             max={140}
             step={5}
             unit="km/h"
