@@ -85,29 +85,94 @@ export default function TrafficRoad({ trafficState, params }: TrafficRoadProps) 
     });
   }, [trafficState.speed]);
 
-  // Animation loop
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    // Animation loop
+    useEffect(() => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
 
-    const animate = (time: number) => {
-      const dt = lastTimeRef.current ? Math.min((time - lastTimeRef.current) / 1000, 0.1) : 0;
-      lastTimeRef.current = time;
+      const animate = (time: number) => {
+        const dt = lastTimeRef.current ? Math.min((time - lastTimeRef.current) / 1000, 0.1) : 0;
+        lastTimeRef.current = time;
 
-      // Update car positions with speed multiplier for visual effect
-      const scale = dimensions.width / params.roadLength; // pixels per km
-      const speedMultiplier = 5; // Speed up animation for better visual feedback
-      carsRef.current.forEach(car => {
-        const pixelsPerSec = (car.speed / 3600) * scale * speedMultiplier;
-        car.x += pixelsPerSec * dt;
-        // Wrap around
-        if (car.x > dimensions.width + 50) {
-          car.x -= dimensions.width + 100;
-        }
-      });
-
+        // Update car positions with car-following behavior
+        const scale = dimensions.width / params.roadLength;
+        const speedMultiplier = 5;
+        
+        // Calculate car length for collision detection
+        const vehicleLengthMeters = 5;
+        const pixelsPerMeter = dimensions.width / (params.roadLength * 1000);
+        const carLengthPx = Math.max(25, Math.min(60, vehicleLengthMeters * pixelsPerMeter));
+        const minGapPx = Math.max(10, carLengthPx * 0.4); // Minimum gap between cars
+        
+        // Group cars by lane
+        const carsByLane: Car[][] = Array.from({ length: params.numLanes }, () => []);
+        carsRef.current.forEach(car => {
+          carsByLane[car.lane].push(car);
+        });
+        
+        // Sort each lane by position
+        carsByLane.forEach(lane => {
+          lane.sort((a, b) => a.x - b.x);
+        });
+        
+        // Calculate new positions with car-following
+        const newPositions: Map<number, number> = new Map();
+        
+        carsByLane.forEach(lane => {
+          if (lane.length === 0) return;
+          
+          for (let i = 0; i < lane.length; i++) {
+            const car = lane[i];
+            // Find the car ahead (next in sorted order, wrapping around)
+            const nextIdx = (i + 1) % lane.length;
+            const carAhead = lane[nextIdx];
+            
+            // Calculate gap to car ahead
+            let gap = carAhead.x - car.x;
+            if (gap <= 0) {
+              // Car ahead has wrapped around
+              gap = (carAhead.x + dimensions.width + 100) - car.x;
+            }
+            
+            // Determine effective speed based on gap
+            let effectiveSpeed = car.speed;
+            const safeDistance = carLengthPx + minGapPx;
+            
+            if (gap < safeDistance) {
+              // Too close - need to slow down
+              // Calculate max speed that maintains safe distance
+              const availableGap = gap - carLengthPx;
+              if (availableGap <= 0) {
+                effectiveSpeed = 0; // Stop if no gap
+              } else {
+                // Slow down proportionally to how close we are
+                const ratio = availableGap / minGapPx;
+                effectiveSpeed = car.speed * Math.min(1, ratio);
+              }
+            }
+            
+            // Calculate new position
+            const pixelsPerSec = (effectiveSpeed / 3600) * scale * speedMultiplier;
+            let newX = car.x + pixelsPerSec * dt;
+            
+            // Wrap around
+            if (newX > dimensions.width + 50) {
+              newX -= dimensions.width + 100;
+            }
+            
+            newPositions.set(car.id, newX);
+          }
+        });
+        
+        // Apply new positions
+        carsRef.current.forEach(car => {
+          const newX = newPositions.get(car.id);
+          if (newX !== undefined) {
+            car.x = newX;
+          }
+        });
       // Draw
       ctx.clearRect(0, 0, dimensions.width, dimensions.height);
       drawRoad(ctx, dimensions.width, dimensions.height, params.numLanes);
