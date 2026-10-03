@@ -96,10 +96,11 @@ export default function TrafficRoad({ trafficState, params }: TrafficRoadProps) 
       const dt = lastTimeRef.current ? Math.min((time - lastTimeRef.current) / 1000, 0.1) : 0;
       lastTimeRef.current = time;
 
-      // Update car positions
+      // Update car positions with speed multiplier for visual effect
       const scale = dimensions.width / params.roadLength; // pixels per km
+      const speedMultiplier = 5; // Speed up animation for better visual feedback
       carsRef.current.forEach(car => {
-        const pixelsPerSec = (car.speed / 3600) * scale;
+        const pixelsPerSec = (car.speed / 3600) * scale * speedMultiplier;
         car.x += pixelsPerSec * dt;
         // Wrap around
         if (car.x > dimensions.width + 50) {
@@ -241,46 +242,76 @@ function drawCars(
   let carLengthPx = vehicleLengthMeters * pixelsPerMeter;
   let gapPx = gapMeters * pixelsPerMeter;
 
-  // Ensure cars are visible but not too large
-  carLengthPx = Math.max(8, Math.min(40, carLengthPx));
-  gapPx = Math.max(3, Math.min(80, gapPx)); // minimum 3px gap even at jam
-
-  const carHeight = Math.min(laneHeight * 0.55, 26);
+  // Ensure cars are visible and have good proportions
+  // Cars should be wider relative to length (like real cars viewed from above)
+  carLengthPx = Math.max(25, Math.min(60, carLengthPx));
+  gapPx = Math.max(8, Math.min(80, gapPx)); // minimum 8px gap even at jam
+  
+  // Car width should be about 60-70% of length for realistic proportions
+  const carHeight = Math.max(18, Math.min(laneHeight * 0.6, carLengthPx * 0.65));
 
   cars.forEach(car => {
     const y = roadTop + car.lane * laneHeight + (laneHeight - carHeight) / 2;
     const x = car.x - carLengthPx / 2;
 
     // Car shadow
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
-    roundRect(ctx, x + 2, y + 2, carLengthPx, carHeight, 3);
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+    roundRect(ctx, x + 2, y + 2, carLengthPx, carHeight, 5);
     ctx.fill();
 
-    // Car body
+    // Car body (main color)
     ctx.fillStyle = car.color;
-    roundRect(ctx, x, y, carLengthPx, carHeight, 3);
+    roundRect(ctx, x, y, carLengthPx, carHeight, 5);
     ctx.fill();
 
-    // Car roof (lighter shade)
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
-    roundRect(ctx, x + carLengthPx * 0.25, y + 2, carLengthPx * 0.35, carHeight - 4, 2);
+    // Car body outline
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
+    ctx.lineWidth = 1;
+    roundRect(ctx, x, y, carLengthPx, carHeight, 5);
+    ctx.stroke();
+
+    // Car roof/cabin (darker shade, centered)
+    const roofPadding = carLengthPx * 0.15;
+    const roofWidth = carLengthPx - roofPadding * 2;
+    const roofHeight = carHeight * 0.7;
+    const roofY = y + (carHeight - roofHeight) / 2;
+    
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+    roundRect(ctx, x + roofPadding, roofY, roofWidth, roofHeight, 3);
     ctx.fill();
 
-    // Windshield
-    ctx.fillStyle = 'rgba(135, 206, 235, 0.6)';
-    ctx.fillRect(x + carLengthPx * 0.65, y + 3, carLengthPx * 0.15, carHeight - 6);
+    // Windshield (front - right side since cars move right)
+    const windshieldWidth = carLengthPx * 0.2;
+    const windshieldHeight = carHeight * 0.5;
+    const windshieldY = y + (carHeight - windshieldHeight) / 2;
+    
+    ctx.fillStyle = 'rgba(135, 206, 235, 0.7)';
+    roundRect(ctx, x + carLengthPx - roofPadding - windshieldWidth, windshieldY, windshieldWidth, windshieldHeight, 2);
+    ctx.fill();
 
-    // Headlights
-    if (carLengthPx > 15) {
-      ctx.fillStyle = 'rgba(255, 255, 200, 0.8)';
-      ctx.fillRect(x + carLengthPx - 2, y + 3, 2, 2);
-      ctx.fillRect(x + carLengthPx - 2, y + carHeight - 5, 2, 2);
+    // Rear window
+    ctx.fillStyle = 'rgba(135, 206, 235, 0.5)';
+    roundRect(ctx, x + roofPadding, windshieldY, windshieldWidth * 0.8, windshieldHeight, 2);
+    ctx.fill();
 
-      // Taillights
-      ctx.fillStyle = 'rgba(255, 50, 50, 0.8)';
-      ctx.fillRect(x, y + 3, 2, 2);
-      ctx.fillRect(x, y + carHeight - 5, 2, 2);
-    }
+    // Headlights (front - right side)
+    const lightSize = Math.max(2, carHeight * 0.12);
+    ctx.fillStyle = 'rgba(255, 255, 200, 0.9)';
+    ctx.beginPath();
+    ctx.arc(x + carLengthPx - 3, y + carHeight * 0.25, lightSize, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(x + carLengthPx - 3, y + carHeight * 0.75, lightSize, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Taillights (rear - left side)
+    ctx.fillStyle = 'rgba(255, 50, 50, 0.9)';
+    ctx.beginPath();
+    ctx.arc(x + 3, y + carHeight * 0.25, lightSize, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(x + 3, y + carHeight * 0.75, lightSize, 0, Math.PI * 2);
+    ctx.fill();
   });
 }
 
