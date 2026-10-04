@@ -79,9 +79,9 @@ export default function Controls({
           <SliderControl
             label="Road Length"
             value={params.roadLength}
-            min={1}
-            max={50}
-            step={1}
+            min={0.25}
+            max={30}
+            step={0.25}
             unit="km"
             onChange={(v) => updateParam('roadLength', v)}
           />

@@ -26,7 +26,7 @@ export interface TrafficState {
 export const DEFAULT_PARAMS: TrafficParams = {
   freeFlowSpeed: 100,
   jamDensity: 150,
-  roadLength: 10,
+  roadLength: 5,
   numLanes: 3,
   model: 'greenshields',
 };
