@@ -124,7 +124,7 @@ If you use this tool in your research or teaching, please cite it as follows:
 
 ```
 Kavee, K. (2026). Traffic Flow Theory Interactive Learning Tool. 
-Retrieved from https://github.com/korawich-kavee/traffic-flow-theory
+Retrieved from https://github.com/korawichkavee/Traffic_Flow_Theory_Web_App
 ```
 
 ### BibTeX
@@ -134,7 +134,7 @@ Retrieved from https://github.com/korawich-kavee/traffic-flow-theory
   author = {Kavee, Korawich},
   title = {Traffic Flow Theory Interactive Learning Tool},
   year = {2026},
-  howpublished = {\url{https://github.com/korawich-kavee/traffic-flow-theory}},
+  howpublished = {\url{https://github.com/korawichkavee/Traffic_Flow_Theory_Web_App}},
   note = {Interactive web application for learning traffic flow theory}
 }
 ```
