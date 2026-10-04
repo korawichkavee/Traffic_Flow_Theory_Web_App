@@ -99,7 +99,7 @@ May, A. D. (1990). *Traffic Flow Fundamentals*. Prentice Hall.
 
 ```bash
 # Clone the repository
-git clone https://github.com/korawich-kavee/traffic-flow-theory.git](https://github.com/korawichkavee/Traffic_Flow_Theory_Web_App
+git clone https://github.com/korawichkavee/Traffic_Flow_Theory_Web_App
 cd traffic-flow-theory
 
 # Install dependencies
