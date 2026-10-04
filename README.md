@@ -9,7 +9,9 @@ An interactive web application for learning and exploring traffic flow theory th
 
 ## 🌐 Live Demo
 
-**Try it now:** [https://traffic-flow-theory.vercel.app](https://traffic-flow-theory.vercel.app)
+**Try it now:** [https://bfb3511e-7d47-4a06-9acd-92ecfb584ea7.preview.qwenlm.io/](https://bfb3511e-7d47-4a06-9acd-92ecfb584ea7.preview.qwenlm.io/)
+
+> ⚠️ **Note:** This is a temporary preview link that may expire. For long-term access, please clone the repository and run it locally (see [Getting Started](#-getting-started) below).
 
 No installation required! Access the interactive traffic flow theory learning tool directly in your browser.
 
@@ -138,6 +140,8 @@ Retrieved from https://github.com/korawich-kavee/traffic-flow-theory
 **Korawich Kavee**
 
 - LinkedIn: [https://www.linkedin.com/in/korawich-kavee-b8214a11b/](https://www.linkedin.com/in/korawich-kavee-b8214a11b/)
+- GitHub: [https://github.com/korawichkavee](https://github.com/korawichkavee)
+- Repository: [https://github.com/korawichkavee/Traffic_Flow_Theory_Web_App](https://github.com/korawichkavee/Traffic_Flow_Theory_Web_App)
 
 ## 📄 License
 
