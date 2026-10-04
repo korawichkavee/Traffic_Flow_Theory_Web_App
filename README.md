@@ -7,6 +7,12 @@ An interactive web application for learning and exploring traffic flow theory th
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178c6)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.0-38bdf8)
 
+## 🌐 Live Demo
+
+**Try it now:** [https://traffic-flow-theory.vercel.app](https://traffic-flow-theory.vercel.app)
+
+No installation required! Access the interactive traffic flow theory learning tool directly in your browser.
+
 ## 🚗 Overview
 
 This interactive web application demonstrates fundamental traffic flow theory through dynamic visualizations and simulations. Users can explore the relationships between traffic density, speed, flow, and travel time by adjusting parameters and observing real-time changes in both the road simulation and fundamental diagrams.
