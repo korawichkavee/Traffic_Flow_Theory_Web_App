@@ -98,9 +98,7 @@ May, A. D. (1990). *Traffic Flow Fundamentals*. Prentice Hall.
 ### Installation
 
 ```bash
-# Clone the repository
-git clone https://github.com/korawichkavee/Traffic_Flow_Theory_Web_App
-cd traffic-flow-theory
+# Clone the repository (Or take a zip file from this repo and unzip the file) 
 
 # Install dependencies
 npm install
