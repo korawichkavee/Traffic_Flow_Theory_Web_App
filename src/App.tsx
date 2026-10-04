@@ -274,6 +274,31 @@ export default function App() {
                     Connect on LinkedIn
                   </a>
                 </div>
+
+                <div className="pt-4 border-t border-gray-700">
+                  <h3 className="text-lg font-semibold text-yellow-400 mb-2">How to Cite This Work</h3>
+                  <div className="space-y-3">
+                    <div>
+                      <p className="text-xs text-gray-500 mb-1 font-medium">Plain Text (APA):</p>
+                      <div className="bg-gray-900/50 p-3 rounded-lg text-xs text-gray-300 font-mono leading-relaxed">
+                        Kavee, K. (2026). <em>Traffic Flow Theory Interactive Learning Tool</em>. 
+                        Retrieved from https://github.com/korawich-kavee/traffic-flow-theory
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500 mb-1 font-medium">BibTeX:</p>
+                      <pre className="bg-gray-900/50 p-3 rounded-lg text-xs text-gray-300 font-mono leading-relaxed overflow-x-auto">
+{`@misc{kavee2026traffic,
+  author = {Kavee, Korawich},
+  title = {Traffic Flow Theory Interactive Learning Tool},
+  year = {2026},
+  howpublished = {\\url{https://github.com/korawich-kavee/traffic-flow-theory}},
+  note = {Interactive web application for learning traffic flow theory}
+}`}
+                      </pre>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
