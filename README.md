@@ -7,6 +7,14 @@ An interactive web application for learning and exploring traffic flow theory th
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178c6)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.0-38bdf8)
 
+## 🌐 Live Demo
+
+**Try it now:** [https://bfb3511e-7d47-4a06-9acd-92ecfb584ea7.preview.qwenlm.io/](https://bfb3511e-7d47-4a06-9acd-92ecfb584ea7.preview.qwenlm.io/)
+
+> ⚠️ **Note:** This is a temporary preview link that may expire. For long-term access, please clone the repository and run it locally (see [Getting Started](#-getting-started) below).
+
+No installation required! Access the interactive traffic flow theory learning tool directly in your browser.
+
 ## 🚗 Overview
 
 This interactive web application demonstrates fundamental traffic flow theory through dynamic visualizations and simulations. Users can explore the relationships between traffic density, speed, flow, and travel time by adjusting parameters and observing real-time changes in both the road simulation and fundamental diagrams.
@@ -136,6 +144,8 @@ Retrieved from https://github.com/korawich-kavee/traffic-flow-theory
 **Korawich Kavee**
 
 - LinkedIn: [https://www.linkedin.com/in/korawich-kavee-b8214a11b/](https://www.linkedin.com/in/korawich-kavee-b8214a11b/)
+- GitHub: [https://github.com/korawichkavee](https://github.com/korawichkavee)
+- Repository: [https://github.com/korawichkavee/Traffic_Flow_Theory_Web_App](https://github.com/korawichkavee/Traffic_Flow_Theory_Web_App)
 
 ## 📄 License
 
