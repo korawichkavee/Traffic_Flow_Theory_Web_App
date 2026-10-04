@@ -12,6 +12,7 @@ export default function App() {
 
   const [showInfo, setShowInfo] = useState(false);
   const [showControls, setShowControls] = useState(true);
+  const [showAbout, setShowAbout] = useState(false);
 
   return (
     <div className="h-screen bg-gray-900 text-white flex flex-col overflow-hidden">
@@ -40,6 +41,12 @@ export default function App() {
             }`}
           >
             ℹ️ Theory
+          </button>
+          <button
+            onClick={() => setShowAbout(true)}
+            className="px-3 py-1.5 text-xs rounded-lg bg-gray-700 text-gray-300 hover:bg-gray-600 transition-colors"
+          >
+            👤 About
           </button>
         </div>
       </header>
@@ -170,6 +177,108 @@ export default function App() {
           )}
         </div>
       </div>
+
+      {/* About Modal */}
+      {showAbout && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-gray-800 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-700 shadow-2xl">
+            <div className="p-6">
+              <div className="flex justify-between items-start mb-4">
+                <h2 className="text-2xl font-bold text-white">About This Project</h2>
+                <button
+                  onClick={() => setShowAbout(false)}
+                  className="text-gray-400 hover:text-white text-2xl leading-none"
+                >
+                  ×
+                </button>
+              </div>
+
+              <div className="space-y-4 text-sm text-gray-300">
+                <div>
+                  <h3 className="text-lg font-semibold text-blue-400 mb-2">Project Description</h3>
+                  <p className="leading-relaxed">
+                    This interactive web application demonstrates fundamental traffic flow theory through 
+                    dynamic visualizations and simulations. Users can explore the relationships between 
+                    traffic density, speed, flow, and travel time by adjusting parameters and observing 
+                    real-time changes in both the road simulation and fundamental diagrams.
+                  </p>
+                  <p className="leading-relaxed mt-2">
+                    The app implements three classical speed-density models (Greenshields, Greenberg, and 
+                    Underwood) with default parameters based on the Highway Capacity Manual and empirical 
+                    research. It serves as an educational tool for understanding traffic engineering 
+                    concepts and the mathematical foundations of traffic flow analysis.
+                  </p>
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-semibold text-green-400 mb-2">Key Features</h3>
+                  <ul className="list-disc list-inside space-y-1 text-gray-400">
+                    <li>Real-time animated road simulation with realistic car-following behavior</li>
+                    <li>Interactive fundamental diagrams (Flow-Density, Speed-Density, Speed-Flow, Travel Time)</li>
+                    <li>Multiple speed-density models with theoretical foundations</li>
+                    <li>Adjustable parameters: free-flow speed, jam density, road length, number of lanes</li>
+                    <li>Visual feedback showing traffic regimes and level of service</li>
+                  </ul>
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-semibold text-purple-400 mb-2">References (APA Format)</h3>
+                  <div className="space-y-3 text-xs text-gray-400 bg-gray-900/50 p-4 rounded-lg">
+                    <p>
+                      Greenshields, B. D. (1935). A study of traffic capacity. In <em>Highway Research Board 
+                      Proceedings</em> (Vol. 1935, pp. 448–462). National Research Council.
+                    </p>
+                    <p>
+                      Greenberg, H. (1959). An analysis of traffic flow. <em>Operations Research, 7</em>(1), 
+                      79–85. https://doi.org/10.1287/opre.7.1.79
+                    </p>
+                    <p>
+                      Underwood, R. T. (1961). Speed, volume, and density relationships. In <em>Quality and 
+                      Speed in Highway Transportation</em> (pp. 91–109). Yale University Bureau of Highway 
+                      Traffic.
+                    </p>
+                    <p>
+                      Transportation Research Board. (2010). <em>Highway Capacity Manual 2010</em>. National 
+                      Academies Press. https://doi.org/10.17226/14915
+                    </p>
+                    <p>
+                      May, A. D. (1990). <em>Traffic Flow Fundamentals</em>. Prentice Hall.
+                    </p>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-semibold text-orange-400 mb-2">Technical Implementation</h3>
+                  <p className="leading-relaxed">
+                    Built with React, TypeScript, and Tailwind CSS. The traffic simulation uses a 
+                    car-following model where vehicles maintain safe distances and adjust speed based on 
+                    the vehicle ahead. Fundamental diagrams are rendered using Recharts for interactive 
+                    data visualization.
+                  </p>
+                </div>
+
+                <div className="pt-4 border-t border-gray-700">
+                  <h3 className="text-lg font-semibold text-cyan-400 mb-2">Author</h3>
+                  <p className="text-gray-400 mb-2">
+                    Created by Korawich Kavee
+                  </p>
+                  <a
+                    href="https://www.linkedin.com/in/korawich-kavee-b8214a11b/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm font-medium"
+                  >
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                    </svg>
+                    Connect on LinkedIn
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
