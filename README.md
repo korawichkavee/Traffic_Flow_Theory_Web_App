@@ -13,6 +13,8 @@ An interactive web application for learning and exploring traffic flow theory th
 
 > ⚠️ **Note:** This is a temporary preview link that may expire. For long-term access, please clone the repository and run it locally (see [Getting Started](#-getting-started) below).
 
+UPDATE! New link I host 
+http://89.167.67.92
 No installation required! Access the interactive traffic flow theory learning tool directly in your browser.
 
 ## 🚗 Overview
